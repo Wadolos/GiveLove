@@ -29,7 +29,7 @@ const NewUser = (user, collback) => {
         g = 'Женский'
     GetZZ(user.date, (zz) => {
         couch.insert('gl_users', {
-            _id: '<gl3_' + user.login,
+            _id: '<gl3_' + user.login.toLowerCase(),
             login: user.login,
             password: user.password,
             name: user.name,
@@ -42,7 +42,7 @@ const NewUser = (user, collback) => {
             avatar: 'default.jpg'
         }).then(({ data, headers, status }) => {
             collback(true)
-        })
+        }, (err)=>{callback(false)})
     })
 
 }
@@ -213,6 +213,7 @@ const CreateMessage = (user1, user2, callback)=>{
     let u = [user1.login, user2.login]
     u.sort()
     let nameDB = u[0] +  '_' + u[1] + '_' + "messages"
+    nameDB = nameDB.toLowerCase()
     couch.createDatabase(nameDB.toLowerCase()).then(()=>{
         couch.insert(nameDB,{
             _id: "_design/GetMessages",
@@ -231,6 +232,7 @@ const CreateMessage = (user1, user2, callback)=>{
 }
 
 const NewMessage = (DB, message, callback)=>{
+    DB = DB.toLowerCase()
     couch.insert(DB, message
         ).then(({data, headers, status }) => {
         callback(true)
@@ -238,6 +240,7 @@ const NewMessage = (DB, message, callback)=>{
 }
 
 const GetMessages = (DB, callback)=>{
+    DB = DB.toLowerCase()
     couch.get(DB, '_design/GetMessages/_view/GetMessages').then(({ data, headers, status }) => {
         callback(data)
     }, (err)=>{
