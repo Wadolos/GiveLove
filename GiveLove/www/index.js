@@ -275,7 +275,7 @@ app.get('/messages/cript/:id', (req, res) => {
 app.post('/autch_check', (req, res) => { /*--------------------------------------POST-----------------------------------*/
 console.log('<gl3_' + req.body.login.toLowerCase())
     couch.GetUser('<gl3_' + req.body.login.toLowerCase(), (data) => {
-        if (req.body.login.toLowerCase() == data.login && req.body.password == data.password) {
+        if (req.body.login == data.login && req.body.password == data.password) {
             couch.GenerateSession('<gl3_' + req.body.login.toLowerCase(), (key) => {
                 res.cookie('token', key);
                 res.cookie('err', 'no');
