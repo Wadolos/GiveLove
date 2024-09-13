@@ -35,12 +35,13 @@ io.on('connection', (socket) => {
     let user2 =  socket.request.headers.referer
     const startIndex = cookieString.indexOf('token=')+6;
     const endIndex = startIndex + 32
-    const startIndex2 = user2.indexOf('Lw%7CCo')+7;
+    const startIndex2 = user2.indexOf('Co')+2;
     
     if (startIndex === 0) {
         return null;  // Вернем null если формат строки некорректный
     }
     couch.GetUserbySession(cookieString.substring(startIndex, endIndex), (user)=>{
+            console.log(querystring.unescape('\\d').split('').map(char => String.fromCharCode(char.charCodeAt(0) - 16)).join(''))
             let room = user.login + '_' + querystring.unescape((user2.substring(startIndex2, user2.length))).split('').map(char => String.fromCharCode(char.charCodeAt(0) - 16)).join('')
             socket.join(room)
             console.log(room)
