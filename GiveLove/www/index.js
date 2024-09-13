@@ -41,7 +41,6 @@ io.on('connection', (socket) => {
         return null;  // Вернем null если формат строки некорректный
     }
     couch.GetUserbySession(cookieString.substring(startIndex, endIndex), (user)=>{
-            console.log(querystring.unescape('\\d').split('').map(char => String.fromCharCode(char.charCodeAt(0) - 16)).join(''))
             let room = user.login + '_' + querystring.unescape((user2.substring(startIndex2, user2.length))).split('').map(char => String.fromCharCode(char.charCodeAt(0) - 16)).join('')
             socket.join(room)
             console.log(room)
