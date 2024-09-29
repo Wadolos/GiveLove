@@ -16,33 +16,25 @@ done
 rm deletedImage.txt
 databases=$(curl -s http://admin:admin@127.0.0.1:5984/_all_dbs | sed 's/\[//;s/\]//;s/"//g')
 
-# Разбиваем базы данных по запятым
 IFS=',' read -ra db_list <<< "$databases"
 
-# Цикл по всем базам данных
 for db in "${db_list[@]}"; do
-  # Если база не начинается с "gl"
   if [[ $db != gl* ]]; then
     echo "Deleting database: $db"
-    # Удаление базы данных
     curl -X DELETE http://admin:admin@127.0.0.1:5984/$db
   fi
 done
 db_url="http://admin:admin@127.0.0.1:5984"
 db_name="gl_sessions"
 
-# Получаем все документы из базы, кроме тех, что имеют _id=_design/getSession
 all_docs=$(curl -s -X GET "$db_url/$db_name/_all_docs?include_docs=true")
 
-# Извлекаем id и rev для каждого документа
 doc_ids=$(echo "$all_docs" | grep -o '"id":"[^"]*' | sed 's/"id":"//')
 doc_revs=$(echo "$all_docs" | grep -o '"rev":"[^"]*' | sed 's/"rev":"//')
 
-# Цикл для удаления каждого документа, кроме _design/getSession
 IFS=$'\n'
 i=0
 for id in $doc_ids; do
-  # Проверяем, чтобы документ не был _design/getSession
   if [[ $id != "_design/getSession" ]]; then
     rev=$(echo "$all_docs" | grep -o "\"$id\",\"value\":{\"rev\":\"[^\"]*\"" | sed 's/.*"rev":"\([^"]*\)".*/\1/')
     
@@ -57,18 +49,13 @@ done
 db_url="http://admin:admin@127.0.0.1:5984"
 db_name="gl_users"
 
-# Получаем все документы из базы, кроме тех, что начинаются с gl3_admin, gl3_moderator и _design/getUsers
 all_docs=$(curl -s -X GET "$db_url/$db_name/_all_docs?include_docs=true")
 
-# Извлекаем id и rev для каждого документа
 doc_ids=$(echo "$all_docs" | grep -o '"id":"[^"]*' | sed 's/"id":"//')
 
-# Цикл для удаления каждого документа, исключая указанные
 IFS=$'\n'
 for id in $doc_ids; do
-  # Исключаем документы, которые нельзя удалять
   if [[ $id != *gl3_admin* && $id != *gl3_moderator* && $id != "_design/GetUsers" ]]; then
-    # Найти соответствующую ревизию для каждого id
     rev=$(echo "$all_docs" | grep -o "\"$id\",\"value\":{\"rev\":\"[^\"]*\"" | sed 's/.*"rev":"\([^"]*\)".*/\1/')
     
     if [[ -n $rev ]]; then
