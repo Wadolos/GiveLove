@@ -334,7 +334,7 @@ app.post('/users/:id/avatar', multer({ storage: storageConfig }).single('file'),
         if (user.avatar != "default.jpg")
             fs.unlinkSync('./public/avatars/' + user.avatar)
         couch.AvatarUpdate(user, req.file.filename, (b) => {
-            res.redirect(`/users/${req.params.id}`)
+            res.redirect(`/users/${req.params.id.split('').map(char => String.fromCharCode(char.charCodeAt(0) + 16)).join('')}`)
         })
     })
 })
@@ -349,7 +349,7 @@ app.post('/users/:id/delete', (req, res) => {
                     } else {
                         console.log("Не получилось")
                         res.cookie('err', 'errdel')
-                        res.redirect(`/users/${req.params.id}`)
+                        res.redirect(`/users/${req.params.id.split('').map(char => String.fromCharCode(char.charCodeAt(0) + 16)).join('')}`)
                     }
                 })
             })
@@ -357,7 +357,7 @@ app.post('/users/:id/delete', (req, res) => {
         } else {
             console.log("Неверные данные")
             res.cookie('err', 'errdel')
-            res.redirect(`/users/${req.params.id}`)
+            res.redirect(`/users/${req.params.id.split('').map(char => String.fromCharCode(char.charCodeAt(0) + 16)).join('')}`)
         }
     })
 })
@@ -368,15 +368,15 @@ app.post('/users/:id/newpass', (req, res) => {
             couch.GetUser(req.params.id, (u) => {
                 couch.UpdatePassword(u, req.body.newpass, (b) => {
                     if (b) {
-                        res.redirect(`/users/${req.params.id}`)
+                        res.redirect(`/users/${req.params.id.split('').map(char => String.fromCharCode(char.charCodeAt(0) + 16)).join('')}`)
                     } else {
-                        res.redirect(`/users/${req.params.id}`)
+                        res.redirect(`/users/${req.params.id.split('').map(char => String.fromCharCode(char.charCodeAt(0) + 16)).join('')}`)
                     }
                 })
             })
         } else {
             res.cookie('err', 'errpass')
-            res.redirect(`/users/${req.params.id}`)
+            res.redirect(`/users/${req.params.id.split('').map(char => String.fromCharCode(char.charCodeAt(0) + 16)).join('')}`)
 
         }
     })
@@ -385,7 +385,7 @@ app.post('/users/:id/newpass', (req, res) => {
 app.post('/users/:id/userupdate', (req, res) => {
     couch.GetUser(req.params.id, (user) => {
         couch.AlienUserUpdate(user, req.body, (b) => {
-            res.redirect(`/users/${req.params.id}`)
+            res.redirect(`/users/${req.params.id.split('').map(char => String.fromCharCode(char.charCodeAt(0) + 16)).join('')}`)
         })
     })
 })
